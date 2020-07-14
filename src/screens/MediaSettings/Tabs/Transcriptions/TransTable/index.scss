@@ -3,3 +3,12 @@
   height: 100%;
   padding: 30px 20px;
 }
+
+#table-root {
+  min-width: 500;
+}
+
+#footer-root {
+  flex-shrink: 0;
+  margin-left: spacing(2.5);
+}
