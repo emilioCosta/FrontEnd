@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './index.scss';
 import _ from 'lodash';
-import { util, api } from 'utils';
+import { util, api, timestr } from 'utils';
 import { CTFragment } from 'layout';
-import Table from '@material-ui/core/Table';
+// import Table from '@material-ui/core/Table';
 import { withStyles, makeStyles, useTheme } from "@material-ui/core/styles";
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -18,141 +18,202 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
+import { CTPlayerController } from 'components/CTPlayer/controllers'
+import Collapse from '@material-ui/core/Collapse';
+import { AutoSizer, Column, Table } from 'react-virtualized';
+import Paper from '@material-ui/core/Paper';
 import { connectWithRedux } from '../../../controllers/trans';
+import 'react-virtualized/styles.css'
 
-function TablePaginationActions(props) {
-  const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
-  const handleFirstPageButtonClick = (event) => {
-    onChangePage(event, 0);
-  };
-  const handleBackButtonClick = (event) => {
-    onChangePage(event, page - 1);
-  };
-  const handleNextButtonClick = (event) => {
-    onChangePage(event, page + 1);
-  };
-  const handleLastPageButtonClick = (event) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
 
-  return (
-    <div id="footer-root">
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
-        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </div>
-  );
-}
+
+
+// function TablePaginationActions(props) {
+//   const theme = useTheme();
+//   const { count, page, rowsPerPage, onChangePage } = props;
+//   const handleFirstPageButtonClick = (event) => {
+//     onChangePage(event, 0);
+//   };
+//   const handleBackButtonClick = (event) => {
+//     onChangePage(event, page - 1);
+//   };
+//   const handleNextButtonClick = (event) => {
+//     onChangePage(event, page + 1);
+//   };
+//   const handleLastPageButtonClick = (event) => {
+//     onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+//   };
+
+//   return (
+//     <div id="footer-root">
+//       <IconButton
+//         onClick={handleFirstPageButtonClick}
+//         disabled={page === 0}
+//         aria-label="first page"
+//       >
+//         {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+//       </IconButton>
+//       <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+//         {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+//       </IconButton>
+//       <IconButton
+//         onClick={handleNextButtonClick}
+//         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+//         aria-label="next page"
+//       >
+//         {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+//       </IconButton>
+//       <IconButton
+//         onClick={handleLastPageButtonClick}
+//         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+//         aria-label="last page"
+//       >
+//         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+//       </IconButton>
+//     </div>
+//   );
+// }
 
 function TransTable(media = undefined) {
-  const data_rows = []
   const [language, setLanguage] = useState('en-US')
   const [captions, setCaptions] = useState([])
-  const [data_pair, setDataPair] = useState({})
+  const data_rows = []
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const createData = (start_time, text) => {
-    // setDataPair({start_time, text});
-    return { start_time, text };
+  const createData = (id, startTime, text) => {
+    return { id, startTime, text }
   }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   useEffect(() => {
     if (!media.media.isUnavailable) {
-      media.media.transcriptions.forEach(
-        (val) => {
-          if (val.language === language) {
-            api.getCaptionsByTranscriptionId(val.id).then((res) => {
-              if (res && res.status === 200)
-                // res.data is the captions array
-                setCaptions(res.data)
-            })
-          }
+      _.map(media.media.transcriptions, (val) => {
+        if (val.language === language) {
+          api.getCaptionsByTranscriptionId(val.id).then((res) => {
+            if (res && res.status === 200)
+              // res.data is the captions array
+              setCaptions(res.data)
+          })
         }
-      )
+      })
     }
   }, [media])
 
-  // captions.map((cap) => {
-  //   data_rows.push(createData(cap.begin, cap.text));
-  // });
+  // captions.map(
+  //   function capToData(cap) {
+  //     data_rows.push(createData(cap.begin.split('.')[0], cap.text));
+  //   }
+  // );
+
+  const columns =
+    [
+      {
+        width: 250,
+        label: 'Time',
+        dataKey: 'startTime',
+      },
+      {
+        width: 250,
+        label: 'Text',
+        dataKey: 'text',
+      },
+    ]
 
   for (let i = 0; i < captions.length; i += 1) {
-    data_rows.push(createData(captions[i].begin, captions[i].text));
+    data_rows.push(createData(i, captions[i].begin.split('.')[0], captions[i].text));
   }
+
+  const headerRenderer = ({ label, columnIndex }) => {
+    return (
+      <TableCell
+        component="div"
+        variant="head"
+        style={{ height: 48 }}
+        align="right"
+      >
+        <span>{label}</span>
+      </TableCell>
+    );
+  };
+
+  const cellRenderer = ({ cellData, columnIndex }) => {
+    if (cellData !== undefined) {
+      return (
+        <TableCell
+          component="div"
+          // className={clsx(classes.tableCell, classes.flexContainer, {
+          //   [classes.noClick]: onRowClick == null,
+          // })}
+          variant="body"
+          style={{ height: 48 }}
+          align="right"
+        >
+          {cellData}
+        </TableCell>
+      );
+    }
+  };
 
   return (
     <CTFragment id="msp-t-table-con" data-scroll>
-      <Table id="table-root">
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">Start Time</TableCell>
-            <TableCell align="center">Text</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(rowsPerPage > 0
-            ? data_rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : data_rows
-          ).map((row) => (
-            <TableRow key={row.start_time}>
-              <TableCell align="center">{row.start_time}</TableCell>
-              <TableCell align="center">{row.text}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+      <AutoSizer>
+        {({ height, width }) => (
+          <Table
+            height={height}
+            width={width}
+            rowHeight={48}
+            headerHeight={48}
+            rowGetter={({ index }) => data_rows[index]}
+            rowCount={data_rows.length}
+            gridStyle={{
+              direction: 'inherit',
+            }}
+          >
+            {/* {columns.map(({ dataKey, ...other }, index) => {
+              return (
+                <Column
+                  dataKey={dataKey}
+                  key={dataKey}
+                  headerRenderer={(headerProps) =>
+                    headerRenderer({
+                      ...headerProps,
+                      columnIndex: index,
+                    })
+                  }
+                  // className={classes.flexContainer}
+                  cellRenderer={cellRenderer}
+                  {...other}
+                />
+              );
+            })} */}
 
-        {/* used to set pages */}
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[10, 50, 100, { label: 'All', value: -1 }]}
-              colSpan={3}
-              count={data_rows.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                inputProps: { 'aria-label': 'rows per page' },
-                native: true,
-              }}
-              onChangePage={handleChangePage}
-              onChangeRowsPerPage={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
+            <Column
+              headerRenderer={() =>
+                headerRenderer({
+                  label: 'Time',
+                  columnIndex: 0,
+                })}
+              // className={classes.flexContainer}
+              dataKey="startTime"
+              cellRenderer={cellRenderer}
+              width={100}
             />
-          </TableRow>
-        </TableFooter>
-      </Table>
+            <Column
+              headerRenderer={() =>
+                headerRenderer({
+                  label: 'Text',
+                  columnIndex: 1,
+                })}
+              // className={classes.flexContainer}
+              dataKey="text"
+              cellRenderer={cellRenderer}
+              width={400}
+            />
+
+          </Table>
+        )}
+      </AutoSizer>
     </CTFragment>
   );
 }
