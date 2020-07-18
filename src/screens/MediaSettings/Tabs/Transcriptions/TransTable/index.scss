@@ -12,3 +12,25 @@
   flex-shrink: 0;
   margin-left: spacing(2.5);
 }
+
+#header {
+  color: var(--ct-text-primary);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+
+#cell-1 {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--ct-text-primary);
+  &:hover {
+    color: var(--ct-text-highlight);
+  }
+}
+#cell-0 {
+  color: var(--ct-text-primary-light);
+  font-weight: bold;
+  font-size: 14px;
+}
+

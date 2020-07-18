@@ -78,9 +78,11 @@ function TransTable(media = undefined) {
   const [language, setLanguage] = useState('en-US')
   const [captions, setCaptions] = useState([])
   const data_rows = []
+  const [open, setOpen] = useState(false)
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [captionIndex, setCaptionIndex] = useState(0)
 
   const createData = (id, startTime, text) => {
     return { id, startTime, text }
@@ -115,7 +117,7 @@ function TransTable(media = undefined) {
       },
       {
         width: 250,
-        label: 'Text',
+        label: 'Caption',
         dataKey: 'text',
       },
     ]
@@ -129,8 +131,8 @@ function TransTable(media = undefined) {
       <TableCell
         component="div"
         variant="head"
-        style={{ height: 48 }}
         align="right"
+        id="header"
       >
         <span>{label}</span>
       </TableCell>
@@ -142,13 +144,17 @@ function TransTable(media = undefined) {
       return (
         <TableCell
           component="div"
-          // className={clsx(classes.tableCell, classes.flexContainer, {
-          //   [classes.noClick]: onRowClick == null,
-          // })}
+          id={`cell-${columnIndex}`}
           variant="body"
-          style={{ height: 48 }}
           align="right"
+          onClick={() => {
+            setOpen(!open)
+          }}
         >
+          {/* <Collapse in={open} timeout="auto" unmountOnExit>
+            {console.log(cellData)}
+            wtf
+          </Collapse> */}
           {cellData}
         </TableCell>
       );
@@ -166,28 +172,8 @@ function TransTable(media = undefined) {
             headerHeight={48}
             rowGetter={({ index }) => data_rows[index]}
             rowCount={data_rows.length}
-            gridStyle={{
-              direction: 'inherit',
-            }}
+            scrollToIndex={captionIndex}
           >
-            {/* {columns.map(({ dataKey, ...other }, index) => {
-              return (
-                <Column
-                  dataKey={dataKey}
-                  key={dataKey}
-                  headerRenderer={(headerProps) =>
-                    headerRenderer({
-                      ...headerProps,
-                      columnIndex: index,
-                    })
-                  }
-                  // className={classes.flexContainer}
-                  cellRenderer={cellRenderer}
-                  {...other}
-                />
-              );
-            })} */}
-
             <Column
               headerRenderer={() =>
                 headerRenderer({
@@ -202,7 +188,7 @@ function TransTable(media = undefined) {
             <Column
               headerRenderer={() =>
                 headerRenderer({
-                  label: 'Text',
+                  label: 'Caption',
                   columnIndex: 1,
                 })}
               // className={classes.flexContainer}
