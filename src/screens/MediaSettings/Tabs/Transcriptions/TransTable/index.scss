@@ -21,6 +21,7 @@
 
 
 #cell-1 {
+  cursor: pointer;
   font-size: 14px;
   font-weight: bold;
   color: var(--ct-text-primary);
@@ -29,8 +30,15 @@
   }
 }
 #cell-0 {
+  cursor: pointer;
   color: var(--ct-text-primary-light);
   font-weight: bold;
   font-size: 14px;
 }
-
+#delete-icon {
+  cursor: pointer;
+  color: var(--ct-btn-color);
+}
+#delete-button {
+  font-weight: bold;
+}

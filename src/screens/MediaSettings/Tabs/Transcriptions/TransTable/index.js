@@ -20,7 +20,13 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import { CTPlayerController } from 'components/CTPlayer/controllers'
 import Collapse from '@material-ui/core/Collapse';
-import { AutoSizer, Column, Table } from 'react-virtualized';
+import Button from '@material-ui/core/Button';
+import {
+  AutoSizer,
+  Column,
+  Table,
+  defaultTableRowRenderer
+} from 'react-virtualized';
 import Paper from '@material-ui/core/Paper';
 import { connectWithRedux } from '../../../controllers/trans';
 import 'react-virtualized/styles.css'
@@ -82,10 +88,12 @@ function TransTable(media = undefined) {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [captionIndex, setCaptionIndex] = useState(0)
+  const [captionIndex, setCaptionIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const onRowClick = () => setOpen(!open);
 
-  const createData = (id, startTime, text) => {
-    return { id, startTime, text }
+  const createData = (id, startTime, text, operations = undefined) => {
+    return { id, startTime, text, operations }
   }
 
   useEffect(() => {
@@ -101,7 +109,6 @@ function TransTable(media = undefined) {
       })
     }
   }, [media])
-
   // captions.map(
   //   function capToData(cap) {
   //     data_rows.push(createData(cap.begin.split('.')[0], cap.text));
@@ -123,8 +130,39 @@ function TransTable(media = undefined) {
     ]
 
   for (let i = 0; i < captions.length; i += 1) {
-    data_rows.push(createData(i, captions[i].begin.split('.')[0], captions[i].text));
+    data_rows.push(createData(i, captions[i].begin.split('.')[0], captions[i].text,
+      <Button id="delete-button">
+        <i className="material-icons" id="delete-icon">delete</i>
+        Delete
+      </Button>
+    ));
   }
+
+  const rowRenderer = props => {
+    const { index, style, className, key, rowData } = props;
+
+    // if (index === selectedIndex) {
+    //   return (
+    //     <div key={key}>
+    //       {defaultTableRowRenderer({
+    //         ...props,
+    //       })}
+    //       <div
+    //         style={{
+    //           marginRight: "auto",
+    //           marginLeft: 80,
+    //           height: 48,
+    //           display: "flex",
+    //           alignItems: "center"
+    //         }}
+    //       >
+    //         {rowData.operations}
+    //       </div>
+    //     </div>
+    //   )
+    // }
+    return defaultTableRowRenderer(props)
+  };
 
   const headerRenderer = ({ label, columnIndex }) => {
     return (
@@ -139,25 +177,47 @@ function TransTable(media = undefined) {
     );
   };
 
-  const cellRenderer = ({ cellData, columnIndex }) => {
+  const cellRenderer = ({ cellData, columnIndex, rowIndex }) => {
     if (cellData !== undefined) {
-      return (
-        <TableCell
-          component="div"
-          id={`cell-${columnIndex}`}
-          variant="body"
-          align="right"
-          onClick={() => {
-            setOpen(!open)
-          }}
-        >
-          {/* <Collapse in={open} timeout="auto" unmountOnExit>
-            {console.log(cellData)}
-            wtf
-          </Collapse> */}
-          {cellData}
-        </TableCell>
-      );
+      if (rowIndex !== selectedIndex) {
+        return (
+          <TableCell
+            component="div"
+            id={`cell-${columnIndex}`}
+            variant="body"
+            align="right"
+          >
+            {/* <Collapse in={open} timeout="auto" unmountOnExit>
+              {console.log(cellData)}
+              wtf
+            </Collapse> */}
+            {cellData}
+          </TableCell>
+        );
+      } 
+        return (
+          <TableCell
+            component="div"
+            id={`cell-${columnIndex}`}
+            variant="body"
+            align="right"
+            style={{
+              marginLeft: 500,
+              alignItems: "center"
+            }}
+          >
+            <Collapse in timeout="auto" unmountOnExit>
+              {cellData}
+            </Collapse>
+            {
+              (columnIndex === 1) &&
+              <Button id="delete-button">
+                <i className="material-icons" id="delete-icon">delete</i>
+                Delete
+              </Button>
+            }
+          </TableCell>
+        )
     }
   };
 
@@ -173,6 +233,12 @@ function TransTable(media = undefined) {
             rowGetter={({ index }) => data_rows[index]}
             rowCount={data_rows.length}
             scrollToIndex={captionIndex}
+            rowRenderer={(props) => rowRenderer({
+              ...props,
+              onRowClick: () => {
+                setSelectedIndex(props.index)
+              }
+            })}
           >
             <Column
               headerRenderer={() =>
