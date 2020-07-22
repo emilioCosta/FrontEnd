@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import './index.scss';
 import _ from 'lodash';
@@ -92,6 +92,8 @@ function TransTable(media = undefined) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const onRowClick = () => setOpen(!open);
 
+  const tableRef = useRef();
+
   const createData = (id, startTime, text, operations = undefined) => {
     return { id, startTime, text, operations }
   }
@@ -114,6 +116,13 @@ function TransTable(media = undefined) {
   //     data_rows.push(createData(cap.begin.split('.')[0], cap.text));
   //   }
   // );
+
+  useEffect(
+    () => {
+      tableRef.current.recomputeRowHeights();
+    },
+    [selectedIndex]
+  );
 
   const columns =
     [
@@ -140,27 +149,33 @@ function TransTable(media = undefined) {
 
   const rowRenderer = props => {
     const { index, style, className, key, rowData } = props;
+    if (index === selectedIndex) {
+      // console.log(rowData)
+      return (
+        <div className={className} key={key}>
+          {
+            defaultTableRowRenderer({
+              ...props,
+              style: {
+                ...style,
 
-    // if (index === selectedIndex) {
-    //   return (
-    //     <div key={key}>
-    //       {defaultTableRowRenderer({
-    //         ...props,
-    //       })}
-    //       <div
-    //         style={{
-    //           marginRight: "auto",
-    //           marginLeft: 80,
-    //           height: 48,
-    //           display: "flex",
-    //           alignItems: "center"
-    //         }}
-    //       >
-    //         {rowData.operations}
-    //       </div>
-    //     </div>
-    //   )
-    // }
+              },
+            })
+          }
+          <div style={{
+            ...style,
+            display: "flex",
+            alignItems: "right",
+            margin: 30,
+          }}
+          >
+            {rowData.operations}
+          </div>
+
+        </div>
+      )
+    }
+
     return defaultTableRowRenderer(props)
   };
 
@@ -177,67 +192,52 @@ function TransTable(media = undefined) {
     );
   };
 
+  const Details = ({ children, index }) => (
+    <div style={{ cursor: "pointer" }} onClick={() => setSelectedIndex(index)}>
+      {children}
+    </div>
+  );
+
   const cellRenderer = ({ cellData, columnIndex, rowIndex }) => {
     if (cellData !== undefined) {
-      if (rowIndex !== selectedIndex) {
-        return (
-          <TableCell
-            component="div"
-            id={`cell-${columnIndex}`}
-            variant="body"
-            align="right"
-          >
-            {/* <Collapse in={open} timeout="auto" unmountOnExit>
-              {console.log(cellData)}
-              wtf
-            </Collapse> */}
-            {cellData}
-          </TableCell>
-        );
-      } 
-        return (
-          <TableCell
-            component="div"
-            id={`cell-${columnIndex}`}
-            variant="body"
-            align="right"
-            style={{
-              marginLeft: 500,
-              alignItems: "center"
-            }}
-          >
-            <Collapse in timeout="auto" unmountOnExit>
-              {cellData}
-            </Collapse>
-            {
-              (columnIndex === 1) &&
-              <Button id="delete-button">
-                <i className="material-icons" id="delete-icon">delete</i>
-                Delete
-              </Button>
-            }
-          </TableCell>
-        )
+      return (
+        <TableCell
+          component="div"
+          id={`cell-${columnIndex}`}
+          variant="body"
+          align="right"
+        >
+          {cellData}
+        </TableCell>
+      );
     }
   };
+
+  const getRowHeight = ({ index }) => (index === selectedIndex ? 80 : 48);
 
   return (
     <CTFragment id="msp-t-table-con" data-scroll>
       <AutoSizer>
         {({ height, width }) => (
           <Table
+            rowHeight={getRowHeight}
+            ref={tableRef}
             height={height}
             width={width}
-            rowHeight={48}
             headerHeight={48}
             rowGetter={({ index }) => data_rows[index]}
             rowCount={data_rows.length}
-            scrollToIndex={captionIndex}
+            // scrollToIndex={captionIndex}
             rowRenderer={(props) => rowRenderer({
               ...props,
               onRowClick: () => {
-                setSelectedIndex(props.index)
-              }
+                onRowClick()
+                if (selectedIndex === props.index) {
+                  setSelectedIndex(-1)
+                } else {
+                  setSelectedIndex(props.index)
+                }
+              },
             })}
           >
             <Column
@@ -246,7 +246,6 @@ function TransTable(media = undefined) {
                   label: 'Time',
                   columnIndex: 0,
                 })}
-              // className={classes.flexContainer}
               dataKey="startTime"
               cellRenderer={cellRenderer}
               width={100}
@@ -257,7 +256,6 @@ function TransTable(media = undefined) {
                   label: 'Caption',
                   columnIndex: 1,
                 })}
-              // className={classes.flexContainer}
               dataKey="text"
               cellRenderer={cellRenderer}
               width={400}
