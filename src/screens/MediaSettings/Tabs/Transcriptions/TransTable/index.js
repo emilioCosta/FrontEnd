@@ -4,7 +4,6 @@ import './index.scss';
 import _ from 'lodash';
 import { util, api, timestr } from 'utils';
 import { CTFragment } from 'layout';
-// import Table from '@material-ui/core/Table';
 import { withStyles, makeStyles, useTheme } from "@material-ui/core/styles";
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -21,64 +20,18 @@ import TablePagination from '@material-ui/core/TablePagination';
 import { CTPlayerController } from 'components/CTPlayer/controllers'
 import Collapse from '@material-ui/core/Collapse';
 import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import {
   AutoSizer,
   Column,
   Table,
-  defaultTableRowRenderer
+  defaultTableRowRenderer,
+  CellMeasurer,
+  CellMeasurerCache,
 } from 'react-virtualized';
 import Paper from '@material-ui/core/Paper';
 import { connectWithRedux } from '../../../controllers/trans';
 import 'react-virtualized/styles.css'
-
-
-
-
-// function TablePaginationActions(props) {
-//   const theme = useTheme();
-//   const { count, page, rowsPerPage, onChangePage } = props;
-//   const handleFirstPageButtonClick = (event) => {
-//     onChangePage(event, 0);
-//   };
-//   const handleBackButtonClick = (event) => {
-//     onChangePage(event, page - 1);
-//   };
-//   const handleNextButtonClick = (event) => {
-//     onChangePage(event, page + 1);
-//   };
-//   const handleLastPageButtonClick = (event) => {
-//     onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-//   };
-
-//   return (
-//     <div id="footer-root">
-//       <IconButton
-//         onClick={handleFirstPageButtonClick}
-//         disabled={page === 0}
-//         aria-label="first page"
-//       >
-//         {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-//       </IconButton>
-//       <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
-//         {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-//       </IconButton>
-//       <IconButton
-//         onClick={handleNextButtonClick}
-//         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-//         aria-label="next page"
-//       >
-//         {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-//       </IconButton>
-//       <IconButton
-//         onClick={handleLastPageButtonClick}
-//         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-//         aria-label="last page"
-//       >
-//         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-//       </IconButton>
-//     </div>
-//   );
-// }
 
 function TransTable(media = undefined) {
   const [language, setLanguage] = useState('en-US')
@@ -111,17 +64,20 @@ function TransTable(media = undefined) {
       })
     }
   }, [media])
-  // captions.map(
-  //   function capToData(cap) {
-  //     data_rows.push(createData(cap.begin.split('.')[0], cap.text));
-  //   }
-  // );
 
   useEffect(
     () => {
       tableRef.current.recomputeRowHeights();
-    },
-    [selectedIndex]
+      // get the begin time of selected caption
+      _.map(captions, (val) => {
+        if (val.index === selectedIndex + 1) {
+          // console.log(selectedIndex,
+          //   val.begin,
+          //   timestr.toSeconds(val.begin))
+        }
+      })
+    }
+    , [selectedIndex]
   );
 
   const columns =
@@ -149,32 +105,31 @@ function TransTable(media = undefined) {
 
   const rowRenderer = props => {
     const { index, style, className, key, rowData } = props;
-    if (index === selectedIndex) {
-      // console.log(rowData)
-      return (
-        <div className={className} key={key}>
-          {
-            defaultTableRowRenderer({
-              ...props,
-              style: {
-                ...style,
+    // if (index === selectedIndex) {
+    //   // console.log(rowData)
+    //   return (
+    //     <div className={className} key={key}>
+    //       {
+    //         defaultTableRowRenderer({
+    //           ...props,
+    //           style: {
+    //             ...style,
+    //           },
+    //         })
+    //       }
+    //       <div style={{
+    //         ...style,
+    //         display: "flex",
+    //         alignItems: "right",
+    //         margin: 30,
+    //       }}
+    //       >
+    //         {rowData.operations}
+    //       </div>
 
-              },
-            })
-          }
-          <div style={{
-            ...style,
-            display: "flex",
-            alignItems: "right",
-            margin: 30,
-          }}
-          >
-            {rowData.operations}
-          </div>
-
-        </div>
-      )
-    }
+    //     </div>
+    //   )
+    // }
 
     return defaultTableRowRenderer(props)
   };
@@ -192,39 +147,60 @@ function TransTable(media = undefined) {
     );
   };
 
-  const Details = ({ children, index }) => (
-    <div style={{ cursor: "pointer" }} onClick={() => setSelectedIndex(index)}>
-      {children}
-    </div>
-  );
+  const cache = new CellMeasurerCache();
 
-  const cellRenderer = ({ cellData, columnIndex, rowIndex }) => {
+  const cellRenderer = ({ cellData, columnIndex, rowIndex, parent, key, style }) => {
     if (cellData !== undefined) {
       return (
-        <TableCell
-          component="div"
-          id={`cell-${columnIndex}`}
-          variant="body"
-          align="right"
+        <CellMeasurer
+          cache={cache}
+          columnIndex={columnIndex}
+          key={key}
+          parent={parent}
+          rowIndex={rowIndex}
         >
-          {cellData}
-        </TableCell>
+          <TableCell
+            component="div"
+            id={`cell-${columnIndex}`}
+            variant="body"
+            align="right"
+            style={{
+              ...style,
+              borderBottom: 0
+            }}
+          >
+            {cellData}
+          </TableCell>
+          <Collapse
+            in={rowIndex === selectedIndex && columnIndex}
+            timeout={{ appear: 150, enter: 150, exit: 0 }}
+            unmountOnExit
+          >
+            <Box margin={2}>
+              <Button>
+                <i className="material-icons" id="delete-icon">
+                  delete
+                </i>
+              </Button>
+            </Box>
+          </Collapse>
+        </CellMeasurer>
       );
     }
   };
 
-  const getRowHeight = ({ index }) => (index === selectedIndex ? 80 : 48);
+  const getRowHeight = ({ index }) => (index === selectedIndex ? 90 : 48);
 
   return (
     <CTFragment id="msp-t-table-con" data-scroll>
       <AutoSizer>
         {({ height, width }) => (
           <Table
-            rowHeight={getRowHeight}
             ref={tableRef}
             height={height}
             width={width}
             headerHeight={48}
+            rowHeight={getRowHeight}
             rowGetter={({ index }) => data_rows[index]}
             rowCount={data_rows.length}
             // scrollToIndex={captionIndex}

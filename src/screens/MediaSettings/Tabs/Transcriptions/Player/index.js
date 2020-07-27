@@ -5,7 +5,8 @@ import { connectWithRedux } from '../../../controllers/trans';
 import './index.scss';
 
 function Player({
-  media
+  media,
+  beginTime
 }) {
   return (
     <CTFragment id="msp-t-player-con" list data-scroll>
@@ -15,7 +16,7 @@ function Player({
         width={540}
         allowTwoScreen
         hideWrapperOnMouseLeave
-        beginAt={100}
+        beginAt={beginTime}
         defaultOpenCC
         allowRangePicker
         defaultOpenRangePicker
@@ -28,6 +29,6 @@ function Player({
 export default connectWithRedux(
   Player,
   [],
-  [],
+  ['beginTime'],
   ['media']
 );

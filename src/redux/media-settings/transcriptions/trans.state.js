@@ -1,5 +1,6 @@
 import { ARRAY_INIT } from 'utils';
 
 export const initialState = {
-  transcriptions: ARRAY_INIT
+  transcriptions: ARRAY_INIT,
+  beginTime: 0
 };
