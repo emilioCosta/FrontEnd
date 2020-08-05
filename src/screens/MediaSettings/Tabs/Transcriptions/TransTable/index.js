@@ -80,20 +80,6 @@ function TransTable(media = undefined) {
     , [selectedIndex]
   );
 
-  const columns =
-    [
-      {
-        width: 250,
-        label: 'Time',
-        dataKey: 'startTime',
-      },
-      {
-        width: 250,
-        label: 'Caption',
-        dataKey: 'text',
-      },
-    ]
-
   for (let i = 0; i < captions.length; i += 1) {
     data_rows.push(createData(i, captions[i].begin.split('.')[0], captions[i].text,
       <Button id="delete-button">
@@ -147,44 +133,22 @@ function TransTable(media = undefined) {
     );
   };
 
-  const cache = new CellMeasurerCache();
 
   const cellRenderer = ({ cellData, columnIndex, rowIndex, parent, key, style }) => {
     if (cellData !== undefined) {
       return (
-        <CellMeasurer
-          cache={cache}
-          columnIndex={columnIndex}
-          key={key}
-          parent={parent}
-          rowIndex={rowIndex}
+        <TableCell
+          component="div"
+          id={`cell-${columnIndex}`}
+          variant="body"
+          align="right"
+          style={{
+            ...style,
+            borderBottom: 0
+          }}
         >
-          <TableCell
-            component="div"
-            id={`cell-${columnIndex}`}
-            variant="body"
-            align="right"
-            style={{
-              ...style,
-              borderBottom: 0
-            }}
-          >
-            {cellData}
-          </TableCell>
-          <Collapse
-            in={rowIndex === selectedIndex && columnIndex}
-            timeout={{ appear: 150, enter: 150, exit: 0 }}
-            unmountOnExit
-          >
-            <Box margin={2}>
-              <Button>
-                <i className="material-icons" id="delete-icon">
-                  delete
-                </i>
-              </Button>
-            </Box>
-          </Collapse>
-        </CellMeasurer>
+          {cellData}
+        </TableCell>
       );
     }
   };
@@ -197,24 +161,24 @@ function TransTable(media = undefined) {
         {({ height, width }) => (
           <Table
             ref={tableRef}
-            height={height}
+            height={500}
             width={width}
             headerHeight={48}
-            rowHeight={getRowHeight}
+            rowHeight={48}
             rowGetter={({ index }) => data_rows[index]}
             rowCount={data_rows.length}
-            // scrollToIndex={captionIndex}
-            rowRenderer={(props) => rowRenderer({
-              ...props,
-              onRowClick: () => {
-                onRowClick()
-                if (selectedIndex === props.index) {
-                  setSelectedIndex(-1)
-                } else {
-                  setSelectedIndex(props.index)
-                }
-              },
-            })}
+          // scrollToIndex={captionIndex}
+          // rowRenderer={(props) => rowRenderer({
+          //   ...props,
+          //   onRowClick: () => {
+          //     onRowClick()
+          //     if (selectedIndex === props.index) {
+          //       setSelectedIndex(-1)
+          //     } else {
+          //       setSelectedIndex(props.index)
+          //     }
+          //   },
+          // })}
           >
             <Column
               headerRenderer={() =>
