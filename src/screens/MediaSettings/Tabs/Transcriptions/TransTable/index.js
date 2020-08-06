@@ -32,10 +32,18 @@ import {
 import Paper from '@material-ui/core/Paper';
 import { connectWithRedux } from '../../../controllers/trans';
 import 'react-virtualized/styles.css'
+import CaptionLine from '../CaptionLine';
 
-function TransTable(media = undefined) {
+function TransTable(
+  media = undefined
+  // currCaption = {},
+  // mode = NORMAL_MODE,
+  // transView = LINE_VIEW,
+  // currEditing = null,
+  // search = SEARCH_INIT,
+){
   const [language, setLanguage] = useState('en-US')
-  const [captions, setCaptions] = useState([])
+  const [transcript, setCaptions] = useState([])
   const data_rows = []
   const [open, setOpen] = useState(false)
 
@@ -69,7 +77,7 @@ function TransTable(media = undefined) {
     () => {
       tableRef.current.recomputeRowHeights();
       // get the begin time of selected caption
-      _.map(captions, (val) => {
+      _.map(transcript, (val) => {
         if (val.index === selectedIndex + 1) {
           // console.log(selectedIndex,
           //   val.begin,
@@ -94,43 +102,36 @@ function TransTable(media = undefined) {
       },
     ]
 
-  for (let i = 0; i < captions.length; i += 1) {
-    data_rows.push(createData(i, captions[i].begin.split('.')[0], captions[i].text,
-      <Button id="delete-button">
-        <i className="material-icons" id="delete-icon">delete</i>
-        Delete
-      </Button>
+  // const handleSeek = () => {
+  //   const time = timeStrToSec(begin);
+  //   videoControl.currTime(time);
+  // };
+
+  for (let i = 0; i < transcript.length; i += 1) {
+    data_rows.push(createData(i, 
+      <button
+        className="plain-btn caption-line-time-display"
+          // onClick={handleSeek}
+        aria-label={`Jump to ${transcript[i].begin.split('.')[0]}`}
+      >
+        <span tabIndex="-1">{transcript[i].begin.split('.')[0]}</span>
+      </button>, 
+      <CaptionLine
+        key={transcript[i].id}
+        caption={transcript[i]}
+        // isEditing={Boolean(currEditing) && currEditing.id === caption.id}
+        // currCaption={currCaption}
+        // isCurrent={isCurrent(caption.id)}
+      />,
+      // <Button id="delete-button">
+      //   <i className="material-icons" id="delete-icon">delete</i>
+      //   Delete
+      // </Button>
     ));
   }
 
   const rowRenderer = props => {
     const { index, style, className, key, rowData } = props;
-    // if (index === selectedIndex) {
-    //   // console.log(rowData)
-    //   return (
-    //     <div className={className} key={key}>
-    //       {
-    //         defaultTableRowRenderer({
-    //           ...props,
-    //           style: {
-    //             ...style,
-    //           },
-    //         })
-    //       }
-    //       <div style={{
-    //         ...style,
-    //         display: "flex",
-    //         alignItems: "right",
-    //         margin: 30,
-    //       }}
-    //       >
-    //         {rowData.operations}
-    //       </div>
-
-    //     </div>
-    //   )
-    // }
-
     return defaultTableRowRenderer(props)
   };
 
@@ -171,7 +172,7 @@ function TransTable(media = undefined) {
           >
             {cellData}
           </TableCell>
-          <Collapse
+          {/* <Collapse
             in={rowIndex === selectedIndex && columnIndex}
             timeout={{ appear: 150, enter: 150, exit: 0 }}
             unmountOnExit
@@ -183,7 +184,7 @@ function TransTable(media = undefined) {
                 </i>
               </Button>
             </Box>
-          </Collapse>
+          </Collapse> */}
         </CellMeasurer>
       );
     }
@@ -206,14 +207,14 @@ function TransTable(media = undefined) {
             // scrollToIndex={captionIndex}
             rowRenderer={(props) => rowRenderer({
               ...props,
-              onRowClick: () => {
-                onRowClick()
-                if (selectedIndex === props.index) {
-                  setSelectedIndex(-1)
-                } else {
-                  setSelectedIndex(props.index)
-                }
-              },
+              // onRowClick: () => {
+              //   onRowClick()
+              //   if (selectedIndex === props.index) {
+              //     setSelectedIndex(-1)
+              //   } else {
+              //     setSelectedIndex(props.index)
+              //   }
+              // },
             })}
           >
             <Column
@@ -234,7 +235,7 @@ function TransTable(media = undefined) {
                 })}
               dataKey="text"
               cellRenderer={cellRenderer}
-              width={400}
+              width={500}
             />
 
           </Table>
