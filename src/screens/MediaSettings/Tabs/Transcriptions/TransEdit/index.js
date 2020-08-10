@@ -2,62 +2,40 @@ import React, { useRef } from 'react';
 import { isMobile } from 'react-device-detect';
 import { util, api, timestr } from 'utils';
 
-
 import {
   transControl,
   videoControl,
   timeStrToSec,
   prettierTimeStr,
-  // WEBVTT_DESCRIPTIONS,
 } from '../../../../Watch/Utils';
 import './index.css';
 
-function CaptionLine({ isCurrent = false, isEditing = false, shouldHide = false, caption = {} }) {
+function TransEdit({ isCurrent = false, isEditing = false, shouldHide = false, caption = {} }) {
   const { text = '', id, begin, kind } = caption;
   const ref = useRef();
 
-  const blurFromInput = () => {
-    if (ref && ref.current && typeof ref.current.blur === 'function') {
-      if (document.activeElement.id === ref.current.id) {
-        ref.current.blur();
-      }
-    }
-  };
+  // const blurFromInput = () => {
+  //   if (ref && ref.current && typeof ref.current.blur === 'function') {
+  //     if (document.activeElement.id === ref.current.id) {
+  //       ref.current.blur();
+  //     }
+  //   }
+  // };
 
   const handleChange = ({ target }) => {
     // console.log(target.innerText)
     transControl.handleChange(target.innerText);
-    // console.log(target.value)
-  };
-
-  const handleFocus = ({ target }) => {
-    // console.error(target.innerText)
-    transControl.edit(caption, target.innerText);
   };
 
   const handleBlur = () => {
     transControl.handleBlur();
   };
 
-  const handleSave = (target) => {
-    // transControl.handleSaveEditing(cap);
-    let innerText = target.innerText;
-    if(innerText === null) innerText = text;
-    api.updateCaptionLine({ id, innerText });
-    // console.log("HAS BEEN SAVED!!!!!!!!!!!!!!!!");
-  };
-
-  // const handleCancel = () => {
-  //   ref.current.innerHTML = text;
-  //   transControl.handleCancelEditing();
-  // };
-
-  const handleKeyDown = (e) => {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      handleSave();
-      blurFromInput();
-    }
+  const handleSave = (cap) => {
+    transControl.handleSaveEditing(cap);
+    // let innerText = evt.target.innerText;
+    // console.log(editText);
+    // api.updateCaptionLine({ id, editText });
   };
 
   const timeStr = prettierTimeStr(begin);
@@ -82,10 +60,9 @@ function CaptionLine({ isCurrent = false, isEditing = false, shouldHide = false,
           id={`cc-line-textarea-${id}`}
           className="cc-line-text"
           dangerouslySetInnerHTML={{ __html: text }}
-          onFocus={handleFocus}
           onBlur={handleBlur}
           onInput={handleChange}
-          onKeyDown={handleKeyDown}
+          // onKeyDown={handleKeyDown}
           spellCheck={false}
         />
         <button
@@ -101,4 +78,4 @@ function CaptionLine({ isCurrent = false, isEditing = false, shouldHide = false,
   );
 }
 
-export default CaptionLine;
+export default TransEdit;

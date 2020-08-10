@@ -6,11 +6,18 @@ import TransTable from './TransTable';
 
 export function TranscriptionsWithRedux({
   media,
-  beginTime
+  // beginTime
+    // currCaption,
+    // mode,
+    // transView = LINE_VIEW,
+    // currEditing = null,
+    // search = SEARCH_INIT,
 }) {
   return (
+    // height width 100% 
+    // flex
     <CTFragment fade className="msp-tab-con">
-      <Player beginTime={beginTime} />
+      <Player />
       <TransTable media={media} />
     </CTFragment>
   );
@@ -19,6 +26,6 @@ export function TranscriptionsWithRedux({
 export const Transcriptions = connectWithRedux(
   TranscriptionsWithRedux,
   [],
-  ['beginTime'],
-  ['media']
+  [],
+  ['media'],
 );

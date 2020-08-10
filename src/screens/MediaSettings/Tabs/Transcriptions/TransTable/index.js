@@ -7,20 +7,6 @@ import { CTFragment } from 'layout';
 import { withStyles, makeStyles, useTheme } from "@material-ui/core/styles";
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import IconButton from '@material-ui/core/IconButton';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
-import { CTPlayerController } from 'components/CTPlayer/controllers'
-import Collapse from '@material-ui/core/Collapse';
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
 import {
   AutoSizer,
   Column,
@@ -32,15 +18,20 @@ import {
 import Paper from '@material-ui/core/Paper';
 import { connectWithRedux } from '../../../controllers/trans';
 import 'react-virtualized/styles.css'
-import CaptionLine from '../CaptionLine';
+import TransEdit from '../TransEdit';
+import {
+  transControl,
+  videoControl,
+  timeStrToSec,
+  prettierTimeStr,
+  NORMAL_MODE,
+  SEARCH_INIT,
+  LINE_VIEW,
+  // WEBVTT_DESCRIPTIONS,
+} from '../../../../Watch/Utils';
 
 function TransTable(
-  media = undefined
-  // currCaption = {},
-  // mode = NORMAL_MODE,
-  // transView = LINE_VIEW,
-  // currEditing = null,
-  // search = SEARCH_INIT,
+  {media}
 ){
   const [language, setLanguage] = useState('en-US')
   const [transcript, setCaptions] = useState([])
@@ -60,11 +51,12 @@ function TransTable(
   }
 
   useEffect(() => {
-    if (!media.media.isUnavailable) {
-      _.map(media.media.transcriptions, (val) => {
+    if (!media.isUnavailable) {
+      _.map(media.transcriptions, (val) => {
         if (val.language === language) {
           api.getCaptionsByTranscriptionId(val.id).then((res) => {
             if (res && res.status === 200)
+              // console.log(media);
               // res.data is the captions array
               setCaptions(res.data)
           })
@@ -116,7 +108,7 @@ function TransTable(
       >
         <span tabIndex="-1">{transcript[i].begin.split('.')[0]}</span>
       </button>, 
-      <CaptionLine
+      <TransEdit
         key={transcript[i].id}
         caption={transcript[i]}
         // isEditing={Boolean(currEditing) && currEditing.id === caption.id}
@@ -223,4 +215,16 @@ function TransTable(
   );
 }
 
-export default TransTable;
+export default connectWithRedux(
+  TransTable, 
+  ['transcript',
+  'currCaption',
+  'currEditing',
+  'bulkEditing',
+  'mode',
+  'transView',
+  'search',],
+  [],
+  ['media'],
+  []
+);
