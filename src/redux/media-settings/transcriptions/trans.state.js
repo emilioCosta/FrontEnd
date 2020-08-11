@@ -2,7 +2,7 @@ import { ARRAY_INIT } from 'utils';
 
 export const initialState = {
   transcriptions: ARRAY_INIT,
-  time: 10,
+  time: 0,
   currTrans: {},
   captions: [],
   currCaption: null,
