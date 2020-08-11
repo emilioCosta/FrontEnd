@@ -31,8 +31,8 @@ import {
 } from '../../../../Watch/Utils';
 
 function TransTable(
-  {media}
-){
+  { media, time }
+) {
   const [language, setLanguage] = useState('en-US')
   const [transcript, setCaptions] = useState([])
   const data_rows = []
@@ -64,6 +64,10 @@ function TransTable(
       })
     }
   }, [media])
+
+  // useEffect(() => {
+  //   console.log(time)
+  // }, [time])
 
   useEffect(
     () => {
@@ -100,20 +104,20 @@ function TransTable(
   // };
 
   for (let i = 0; i < transcript.length; i += 1) {
-    data_rows.push(createData(i, 
+    data_rows.push(createData(i,
       <button
         className="plain-btn caption-line-time-display"
-          // onClick={handleSeek}
+        // onClick={handleSeek}
         aria-label={`Jump to ${transcript[i].begin.split('.')[0]}`}
       >
         <span tabIndex="-1">{transcript[i].begin.split('.')[0]}</span>
-      </button>, 
+      </button>,
       <TransEdit
         key={transcript[i].id}
         caption={transcript[i]}
-        // isEditing={Boolean(currEditing) && currEditing.id === caption.id}
-        // currCaption={currCaption}
-        // isCurrent={isCurrent(caption.id)}
+      // isEditing={Boolean(currEditing) && currEditing.id === caption.id}
+      // currCaption={currCaption}
+      // isCurrent={isCurrent(caption.id)}
       />,
       // <Button id="delete-button">
       //   <i className="material-icons" id="delete-icon">delete</i>
@@ -168,7 +172,7 @@ function TransTable(
         {({ height, width }) => (
           <Table
             ref={tableRef}
-            height={500}
+            height={height}
             width={width}
             headerHeight={48}
             rowHeight={48}
@@ -216,14 +220,14 @@ function TransTable(
 }
 
 export default connectWithRedux(
-  TransTable, 
+  TransTable,
   ['transcript',
-  'currCaption',
-  'currEditing',
-  'bulkEditing',
-  'mode',
-  'transView',
-  'search',],
+    'currCaption',
+    'currEditing',
+    'bulkEditing',
+    'mode',
+    'transView',
+    'search',],
   [],
   ['media'],
   []

@@ -6,26 +6,26 @@ import TransTable from './TransTable';
 
 export function TranscriptionsWithRedux({
   media,
-  // beginTime
-    // currCaption,
-    // mode,
-    // transView = LINE_VIEW,
-    // currEditing = null,
-    // search = SEARCH_INIT,
+  time
 }) {
   return (
     // height width 100% 
     // flex
     <CTFragment fade className="msp-tab-con">
       <Player />
-      <TransTable media={media} />
+      <TransTable media={media} time={time} />
     </CTFragment>
   );
 }
 
 export const Transcriptions = connectWithRedux(
   TranscriptionsWithRedux,
-  [],
+  ['time',
+    'transcriptions',
+    'currTrans',
+    'captions',
+    'currCaption',
+    'currEditing'],
   [],
   ['media'],
 );
