@@ -19,22 +19,27 @@ import Paper from '@material-ui/core/Paper';
 import { connectWithRedux } from '../../../controllers/trans';
 import 'react-virtualized/styles.css'
 import TransEdit from '../TransEdit';
-import {
-  transControl,
-  videoControl,
-  timeStrToSec,
-  prettierTimeStr,
-  NORMAL_MODE,
-  SEARCH_INIT,
-  LINE_VIEW,
-  // WEBVTT_DESCRIPTIONS,
-} from '../../../../Watch/Utils';
 
 function TransTable(
-  { media, time }
+  { media, props, dispatches }
 ) {
+  const {
+    transcriptions,
+    time,
+    currTrans,
+    captions,
+    currCaption,
+    currEditing
+  } = props;
+  const {
+    setTranscriptions,
+    setTime,
+    setCurrTrans,
+    setCaptions,
+    setCurrCaption,
+    setCurrEditing
+  } = dispatches;
   const [language, setLanguage] = useState('en-US')
-  const [transcript, setCaptions] = useState([])
   const data_rows = []
   const [open, setOpen] = useState(false)
 
@@ -50,30 +55,28 @@ function TransTable(
     return { id, startTime, text, operations }
   }
 
+  // set transcriptions and captions
   useEffect(() => {
     if (!media.isUnavailable) {
+      setTranscriptions(media.transcriptions)
       _.map(media.transcriptions, (val) => {
         if (val.language === language) {
           api.getCaptionsByTranscriptionId(val.id).then((res) => {
-            if (res && res.status === 200)
-              // console.log(media);
+            if (res && res.status === 200) {
               // res.data is the captions array
               setCaptions(res.data)
+            }
           })
         }
       })
     }
   }, [media])
 
-  // useEffect(() => {
-  //   console.log(time)
-  // }, [time])
-
   useEffect(
     () => {
       tableRef.current.recomputeRowHeights();
       // get the begin time of selected caption
-      _.map(transcript, (val) => {
+      _.map(captions, (val) => {
         if (val.index === selectedIndex + 1) {
           // console.log(selectedIndex,
           //   val.begin,
@@ -103,18 +106,18 @@ function TransTable(
   //   videoControl.currTime(time);
   // };
 
-  for (let i = 0; i < transcript.length; i += 1) {
+  for (let i = 0; i < captions.length; i += 1) {
     data_rows.push(createData(i,
       <button
         className="plain-btn caption-line-time-display"
         // onClick={handleSeek}
-        aria-label={`Jump to ${transcript[i].begin.split('.')[0]}`}
+        aria-label={`Jump to ${captions[i].begin.split('.')[0]}`}
       >
-        <span tabIndex="-1">{transcript[i].begin.split('.')[0]}</span>
+        <span tabIndex="-1">{captions[i].begin.split('.')[0]}</span>
       </button>,
       <TransEdit
-        key={transcript[i].id}
-        caption={transcript[i]}
+        key={captions[i].id}
+        caption={captions[i]}
       // isEditing={Boolean(currEditing) && currEditing.id === caption.id}
       // currCaption={currCaption}
       // isCurrent={isCurrent(caption.id)}
@@ -126,10 +129,10 @@ function TransTable(
     ));
   }
 
-  const rowRenderer = props => {
-    const { index, style, className, key, rowData } = props;
-    return defaultTableRowRenderer(props)
-  };
+  // const rowRenderer = props => {
+  //   const { index, style, className, key, rowData } = props;
+  //   return defaultTableRowRenderer(props)
+  // };
 
   const headerRenderer = ({ label, columnIndex }) => {
     return (
@@ -139,7 +142,9 @@ function TransTable(
         align="right"
         id="header"
       >
-        <span>{label}</span>
+        <span>
+          {label}
+        </span>
       </TableCell>
     );
   };
@@ -221,14 +226,19 @@ function TransTable(
 
 export default connectWithRedux(
   TransTable,
-  ['transcript',
-    'currCaption',
-    'currEditing',
-    'bulkEditing',
-    'mode',
-    'transView',
-    'search',],
-  [],
+  [
+    // 'transcriptions',
+    // 'time',
+    // 'currEditing',
+  ],
+  [
+    // 'setTranscriptions',
+    // 'setTime',
+    // 'setCurrTrans',
+    // 'setCaptions',
+    // 'setCurrCaption',
+    // 'setCurrEditing'
+  ],
   ['media'],
   []
 );

@@ -9,7 +9,7 @@ import {
 } from './trans.action.types';
 
 export const setTranscriptions = createAction(SET_TRANSCRIPTIONS);
-export const setBeginTime = createAction(SET_TIME);
+export const setTime = createAction(SET_TIME);
 export const setCurrTrans = createAction(SET_CURR_TRANS);
 export const setCaptions = createAction(SET_CAPTIONS);
 export const setCurrCaption = createAction(SET_CURR_CAPTION);
