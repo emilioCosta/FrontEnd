@@ -29,6 +29,7 @@
   &:hover {
     color: var(--ct-text-highlight);
   }
+  width: 35rem
 }
 #cell-0 {
   cursor: pointer;
@@ -44,4 +45,7 @@
   font-weight: bold;
   margin-left: 500px;
   margin-bottom: auto;
+}
+.msp-caption-input {
+  width: 35rem
 }

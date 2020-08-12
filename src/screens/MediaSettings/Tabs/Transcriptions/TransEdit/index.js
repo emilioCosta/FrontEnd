@@ -8,7 +8,7 @@ import {
   timeStrToSec,
   prettierTimeStr,
 } from '../../../../Watch/Utils';
-import './index.css';
+import './index.scss';
 
 function TransEdit({ isCurrent = false, isEditing = false, shouldHide = false, caption = {} }) {
   const { text = '', id, begin, kind } = caption;
@@ -65,14 +65,14 @@ function TransEdit({ isCurrent = false, isEditing = false, shouldHide = false, c
           // onKeyDown={handleKeyDown}
           spellCheck={false}
         />
-        <button
+        {/* <button
           className="caption-cc-line-btns plain-btn caption-line-save-btn"
           onClick={handleSave}
           tabIndex={-1}
           aria-hidden
         >
           Save
-        </button>
+        </button> */}
       </div>
     </div>
   );

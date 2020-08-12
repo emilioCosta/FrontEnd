@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import './index.scss';
 import _ from 'lodash';
 import { util, api, timestr } from 'utils';
-import { CTFragment } from 'layout';
+import {
+  CTFragment, CTInput
+} from 'layout';
 import { withStyles, makeStyles, useTheme } from "@material-ui/core/styles";
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -49,11 +51,18 @@ function TransTable(
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const onRowClick = () => setOpen(!open);
 
+  const handleCaptionChange =
+    ({ target: { value } }) => setCurrCaption(value);
+
   const tableRef = useRef();
 
   const createData = (id, startTime, text, operations = undefined) => {
     return { id, startTime, text, operations }
   }
+
+  // useEffect(() => {
+  //   console.log(captions, transcriptions)
+  // }, [captions, transcriptions])
 
   // set transcriptions and captions
   useEffect(() => {
@@ -87,20 +96,6 @@ function TransTable(
     , [selectedIndex]
   );
 
-  const columns =
-    [
-      {
-        width: 250,
-        label: 'Time',
-        dataKey: 'startTime',
-      },
-      {
-        width: 250,
-        label: 'Caption',
-        dataKey: 'text',
-      },
-    ]
-
   // const handleSeek = () => {
   //   const time = timeStrToSec(begin);
   //   videoControl.currTime(time);
@@ -115,13 +110,20 @@ function TransTable(
       >
         <span tabIndex="-1">{captions[i].begin.split('.')[0]}</span>
       </button>,
+      // <CTInput
+      //   className="msp-caption-input"
+      //   underlined
+      //   textarea
+      //   value={captions[i].text}
+      // />
       <TransEdit
         key={captions[i].id}
         caption={captions[i]}
       // isEditing={Boolean(currEditing) && currEditing.id === caption.id}
       // currCaption={currCaption}
       // isCurrent={isCurrent(caption.id)}
-      />,
+      />
+      ,
       // <Button id="delete-button">
       //   <i className="material-icons" id="delete-icon">delete</i>
       //   Delete

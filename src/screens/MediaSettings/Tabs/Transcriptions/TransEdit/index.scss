@@ -87,14 +87,14 @@
 .cc-line-text:focus,
 .cc-line-text:focus:hover,
 .cc-caption-line[current=true] .cc-line-text {
-  color: red;
+  color: var(--ct-text-primary-light);
   /* color:black; */
   outline: none;
   font-weight: bold;
   /* font-size: 1.3em; */
 }
 .cc-caption-line[editing=true] .cc-line-text {
-  color: red !important;
+  color: var(--ct-text-primary-light) !important;
   outline: none;
   font-weight: bold;
 }
