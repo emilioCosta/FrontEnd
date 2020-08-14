@@ -3,14 +3,27 @@ import { isMobile } from 'react-device-detect';
 import { util, api, timestr } from 'utils';
 
 import {
+  CTInput
+} from 'layout';
+import {
   transControl,
   videoControl,
   timeStrToSec,
   prettierTimeStr,
 } from '../../../../Watch/Utils';
+import { connectWithRedux } from '../../../controllers/trans';
 import './index.scss';
 
-function TransEdit({ isCurrent = false, isEditing = false, shouldHide = false, caption = {} }) {
+
+function TransEdit({
+  isCurrent = false,
+  isEditing = false,
+  shouldHide = false,
+  caption = {},
+  captions,
+  currCaption,
+  currEditing
+}) {
   const { text = '', id, begin, kind } = caption;
   const ref = useRef();
 
@@ -78,4 +91,21 @@ function TransEdit({ isCurrent = false, isEditing = false, shouldHide = false, c
   );
 }
 
-export default TransEdit;
+export default connectWithRedux(
+  TransEdit,
+  [
+    'captions',
+    'currCaption',
+    'currEditing',
+  ],
+  [
+    // 'setTranscriptions',
+    // 'setTime',
+    // 'setCurrTrans',
+    'setCaptions',
+    'setCurrCaption',
+    'setCurrEditing'
+  ],
+  [],
+  []
+);

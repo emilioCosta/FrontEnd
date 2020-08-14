@@ -18,6 +18,7 @@ import {
   CellMeasurerCache,
 } from 'react-virtualized';
 import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 import { connectWithRedux } from '../../../controllers/trans';
 import 'react-virtualized/styles.css'
 import TransEdit from '../TransEdit';
@@ -27,7 +28,7 @@ function TransTable(
 ) {
   const {
     transcriptions,
-    time,
+    // time,
     currTrans,
     captions,
     currCaption,
@@ -56,8 +57,8 @@ function TransTable(
 
   const tableRef = useRef();
 
-  const createData = (id, startTime, text, operations = undefined) => {
-    return { id, startTime, text, operations }
+  const createData = (id, time, text, operations = undefined) => {
+    return { id, time, text, operations }
   }
 
   // useEffect(() => {
@@ -103,13 +104,28 @@ function TransTable(
 
   for (let i = 0; i < captions.length; i += 1) {
     data_rows.push(createData(i,
-      <button
-        className="plain-btn caption-line-time-display"
-        // onClick={handleSeek}
-        aria-label={`Jump to ${captions[i].begin.split('.')[0]}`}
-      >
-        <span tabIndex="-1">{captions[i].begin.split('.')[0]}</span>
-      </button>,
+      <>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          spacing={0}
+        >
+          <button
+            className="plain-btn caption-line-time-display msp-caption-time-begin"
+          // onClick={handleSeek}
+          >
+            <span tabIndex="-1">{captions[i].begin.split('.')[0]}</span>
+          </button>
+          <button
+            className="plain-btn caption-line-time-display msp-caption-time-begin"
+          // onClick={handleSeek}
+          >
+            <span tabIndex="-1">{captions[i].end.split('.')[0]}</span>
+          </button>
+        </Grid>
+      </>,
       // <CTInput
       //   className="msp-caption-input"
       //   underlined
@@ -133,7 +149,7 @@ function TransTable(
 
   // const rowRenderer = props => {
   //   const { index, style, className, key, rowData } = props;
-  //   return defaultTableRowRenderer(props)
+  //   return defaultTableRowRenderer()
   // };
 
   const headerRenderer = ({ label, columnIndex }) => {
@@ -182,7 +198,7 @@ function TransTable(
             height={height}
             width={width}
             headerHeight={48}
-            rowHeight={48}
+            rowHeight={68}
             rowGetter={({ index }) => data_rows[index]}
             rowCount={data_rows.length}
           // scrollToIndex={captionIndex}
@@ -204,9 +220,9 @@ function TransTable(
                   label: 'Time',
                   columnIndex: 0,
                 })}
-              dataKey="startTime"
+              dataKey="time"
               cellRenderer={cellRenderer}
-              width={100}
+              width={200}
             />
             <Column
               headerRenderer={() =>
