@@ -7,4 +7,5 @@ export const initialState = {
   captions: [],
   currCaption: null,
   currEditing: null,
+  isEditing: false
 };

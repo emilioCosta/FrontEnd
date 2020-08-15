@@ -5,6 +5,7 @@ import {
   SET_CAPTIONS,
   SET_CURR_CAPTION,
   SET_CURR_EDITING,
+  SET_IS_EDITING
 } from './trans.action.types';
 import { initialState } from './trans.state';
 
@@ -24,6 +25,8 @@ const transReducer = (state = initialState, action) => {
       return { ...state, currCaption: value };
     case SET_CURR_EDITING:
       return { ...state, currEditing: value };
+    case SET_IS_EDITING:
+      return { ...state, isEditing: value };
     default:
       return state;
   }

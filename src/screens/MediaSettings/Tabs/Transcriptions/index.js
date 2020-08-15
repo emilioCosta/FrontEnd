@@ -12,21 +12,24 @@ export function TranscriptionsWithRedux({
   captions,
   currCaption,
   currEditing,
+  isEditing,
   setTranscriptions,
   setTime,
   setCurrTrans,
   setCaptions,
   setCurrCaption,
-  setCurrEditing
+  setCurrEditing,
+  setIsEditing
 }) {
   // states & dispatches
-  const props = {
+  const states = {
     transcriptions,
     time,
     currTrans,
     captions,
     currCaption,
-    currEditing
+    currEditing,
+    isEditing,
   }
   const dispatches = {
     setTranscriptions,
@@ -34,13 +37,14 @@ export function TranscriptionsWithRedux({
     setCurrTrans,
     setCaptions,
     setCurrCaption,
-    setCurrEditing
+    setCurrEditing,
+    setIsEditing
   }
   return (
 
     <CTFragment fade className="msp-tab-con">
       <Player />
-      <TransTable media={media} props={props} dispatches={dispatches} />
+      <TransTable media={media} states={states} dispatches={dispatches} />
     </CTFragment>
   );
 }
@@ -53,7 +57,8 @@ export const Transcriptions = connectWithRedux(
     'currTrans',
     'captions',
     'currCaption',
-    'currEditing'
+    'currEditing',
+    'isEditing'
   ],
   [
     'setTranscriptions',
@@ -61,7 +66,8 @@ export const Transcriptions = connectWithRedux(
     'setCurrTrans',
     'setCaptions',
     'setCurrCaption',
-    'setCurrEditing'
+    'setCurrEditing',
+    'setIsEditing'
   ],
   ['media'],
 );

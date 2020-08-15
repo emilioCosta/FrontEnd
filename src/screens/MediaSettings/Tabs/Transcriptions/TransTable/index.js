@@ -9,6 +9,9 @@ import {
 import { withStyles, makeStyles, useTheme } from "@material-ui/core/styles";
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import { Button } from '@material-ui/core';
+import SaveIcon from '@material-ui/icons/Save';
+import CancelIcon from '@material-ui/icons/Cancel';
 import {
   AutoSizer,
   Column,
@@ -24,7 +27,7 @@ import 'react-virtualized/styles.css'
 import TransEdit from '../TransEdit';
 
 function TransTable(
-  { media, props, dispatches }
+  { media, states, dispatches }
 ) {
   const {
     transcriptions,
@@ -32,15 +35,17 @@ function TransTable(
     currTrans,
     captions,
     currCaption,
-    currEditing
-  } = props;
+    currEditing,
+    isEditing
+  } = states;
   const {
     setTranscriptions,
     setTime,
     setCurrTrans,
     setCaptions,
     setCurrCaption,
-    setCurrEditing
+    setCurrEditing,
+    setIsEditing
   } = dispatches;
   const [language, setLanguage] = useState('en-US')
   const data_rows = []
@@ -147,24 +152,37 @@ function TransTable(
     ));
   }
 
-  // const rowRenderer = props => {
-  //   const { index, style, className, key, rowData } = props;
-  //   return defaultTableRowRenderer()
-  // };
+  const rowRenderer = props => {
+    const { index, style, className, key, rowData } = props;
+    // console.log(className)
+    return defaultTableRowRenderer(
+      {
+        ...props,
+        // style: { ...style, backgroundColor: 'red' }
+      }
+    )
+  };
 
   const headerRenderer = ({ label, columnIndex }) => {
-    return (
-      <TableCell
-        component="div"
-        variant="head"
-        align="right"
-        id="header"
-      >
-        <span>
-          {label}
-        </span>
-      </TableCell>
-    );
+    if (!columnIndex) {
+      return (
+        // <TableCell
+        //   component="div"
+        //   variant="head"
+        //   align="right"
+        //   id="header"
+        // >
+        //   <span>
+        //     {label}
+        //   </span>
+        // </TableCell>
+        <div>
+          <Button className="header-button" startIcon={<SaveIcon />}>Save</Button>
+          <Button className="header-button" startIcon={<CancelIcon />}>Cancel</Button>
+        </div>
+
+      )
+    }
   };
 
 
@@ -201,18 +219,21 @@ function TransTable(
             rowHeight={68}
             rowGetter={({ index }) => data_rows[index]}
             rowCount={data_rows.length}
-          // scrollToIndex={captionIndex}
-          // rowRenderer={(props) => rowRenderer({
-          //   ...props,
-          //   onRowClick: () => {
-          //     onRowClick()
-          //     if (selectedIndex === props.index) {
-          //       setSelectedIndex(-1)
-          //     } else {
-          //       setSelectedIndex(props.index)
-          //     }
-          //   },
-          // })}
+            // scrollToIndex={captionIndex}
+            rowRenderer={
+              //   (props) => rowRenderer({
+              //   ...props,
+              //   onRowClick: () => {
+              //     onRowClick()
+              //     if (selectedIndex === props.index) {
+              //       setSelectedIndex(-1)
+              //     } else {
+              //       setSelectedIndex(props.index)
+              //     }
+              //   },
+              // })
+              rowRenderer
+            }
           >
             <Column
               headerRenderer={() =>

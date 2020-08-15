@@ -6,6 +6,7 @@ import {
   SET_CAPTIONS,
   SET_CURR_CAPTION,
   SET_CURR_EDITING,
+  SET_IS_EDITING
 } from './trans.action.types';
 
 export const setTranscriptions = createAction(SET_TRANSCRIPTIONS);
@@ -14,3 +15,4 @@ export const setCurrTrans = createAction(SET_CURR_TRANS);
 export const setCaptions = createAction(SET_CAPTIONS);
 export const setCurrCaption = createAction(SET_CURR_CAPTION);
 export const setCurrEditing = createAction(SET_CURR_EDITING);
+export const setIsEditing = createAction(SET_IS_EDITING);

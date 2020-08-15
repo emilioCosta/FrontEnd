@@ -10,3 +10,4 @@ export const SET_DESCRIPTION = 'trans-set-description';
 export const SET_CURR_DESCRIPTION = 'trans-set-curr-description';
 export const SET_CURR_EDITING = 'trans-set-curr-editing';
 export const SET_BULK_EDITING = 'trans-set-bulk-editing';
+export const SET_IS_EDITING = 'trans-set-bulk-editing';
