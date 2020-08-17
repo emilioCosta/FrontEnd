@@ -24,7 +24,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { connectWithRedux } from '../../../controllers/trans';
 import 'react-virtualized/styles.css'
-import TransEdit from '../TransEdit';
+import TransLine from '../TransLine';
 
 function TransTable(
   { media, states, dispatches }
@@ -107,7 +107,10 @@ function TransTable(
   //   videoControl.currTime(time);
   // };
 
-  for (let i = 0; i < captions.length; i += 1) {
+  let captionsCpy = _.cloneDeep(captions);
+
+  for (let i = 0; i < captionsCpy.length; i += 1) {
+    // console.log(captionsCpy[i]);
     data_rows.push(createData(i,
       <>
         <Grid
@@ -121,30 +124,23 @@ function TransTable(
             className="plain-btn caption-line-time-display msp-caption-time-begin"
           // onClick={handleSeek}
           >
-            <span tabIndex="-1">{captions[i].begin.split('.')[0]}</span>
+            <span tabIndex="-1">{captionsCpy[i].begin.split('.')[0]}</span>
           </button>
           <button
             className="plain-btn caption-line-time-display msp-caption-time-begin"
           // onClick={handleSeek}
           >
-            <span tabIndex="-1">{captions[i].end.split('.')[0]}</span>
+            <span tabIndex="-1">{captionsCpy[i].end.split('.')[0]}</span>
           </button>
         </Grid>
       </>,
-      // <CTInput
-      //   className="msp-caption-input"
-      //   underlined
-      //   textarea
-      //   value={captions[i].text}
-      // />
-      <TransEdit
-        key={captions[i].id}
-        caption={captions[i]}
-      // isEditing={Boolean(currEditing) && currEditing.id === caption.id}
-      // currCaption={currCaption}
-      // isCurrent={isCurrent(caption.id)}
-      />
-      ,
+      <CTInput
+        id={`cc-line-textarea-${captionsCpy[i].id}`}
+        className="msp-caption-input"
+        underlined
+        defaultValue={captionsCpy[i].text}
+        onChange={(e) => {captionsCpy[i].text = e.target.value;}}
+      />,
       // <Button id="delete-button">
       //   <i className="material-icons" id="delete-icon">delete</i>
       //   Delete
@@ -163,6 +159,15 @@ function TransTable(
     )
   };
 
+  const handleBulkSave = () => {
+      // console.log(captionsCpy);
+      // for (let i = 0; i < captionsCpy.length; i += 1) {
+      //   const { text = '', id, } = captionsCpy[i];
+      //   console.log("reacg");
+      //   api.updateCaptionLine({ id, text });
+      // }
+  }
+  
   const headerRenderer = ({ label, columnIndex }) => {
     if (!columnIndex) {
       return (
@@ -177,7 +182,7 @@ function TransTable(
         //   </span>
         // </TableCell>
         <div>
-          <Button className="header-button" startIcon={<SaveIcon />}>Save</Button>
+          <Button onClick={handleBulkSave} className="header-button" startIcon={<SaveIcon />}>Save</Button>
           <Button className="header-button" startIcon={<CancelIcon />}>Cancel</Button>
         </div>
 
