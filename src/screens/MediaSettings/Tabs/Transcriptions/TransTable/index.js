@@ -24,7 +24,6 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { connectWithRedux } from '../../../controllers/trans';
 import 'react-virtualized/styles.css'
-import TransLine from '../TransLine';
 
 function TransTable(
   { media, states, dispatches }
@@ -109,6 +108,17 @@ function TransTable(
 
   let captionsCpy = _.cloneDeep(captions);
 
+  // captionsCpy.addEventListener('click',i);
+
+  // const handleChange = (event, i) => {
+  //   captionsCpy[i].text = event.target.value;
+  // }
+
+  // captionsCpy.addEventListener('click', (event) => event_handler(event, 'An argument'));
+
+  // const handleChange = (i, e) => {
+  //   captionsCpy[i].text = e.target.value;
+  // }
   for (let i = 0; i < captionsCpy.length; i += 1) {
     // console.log(captionsCpy[i]);
     data_rows.push(createData(i,
@@ -140,6 +150,8 @@ function TransTable(
         underlined
         defaultValue={captionsCpy[i].text}
         onChange={(e) => {captionsCpy[i].text = e.target.value;}}
+        // value={captionsCpy[i].text}
+        // onChange={this.handleChange.bind(this, i)}
       />,
       // <Button id="delete-button">
       //   <i className="material-icons" id="delete-icon">delete</i>
@@ -166,6 +178,12 @@ function TransTable(
       //   console.log("reacg");
       //   api.updateCaptionLine({ id, text });
       // }
+      // setCaptions(captionsCpy);
+  }
+
+  const handleBulkCancel = () => {
+    // captionsCpy = _.cloneDeep(captions);
+    // console.log(captionsCpy);
   }
   
   const headerRenderer = ({ label, columnIndex }) => {
@@ -183,7 +201,7 @@ function TransTable(
         // </TableCell>
         <div>
           <Button onClick={handleBulkSave} className="header-button" startIcon={<SaveIcon />}>Save</Button>
-          <Button className="header-button" startIcon={<CancelIcon />}>Cancel</Button>
+          <Button onClick={handleBulkCancel} className="header-button" startIcon={<CancelIcon />}>Cancel</Button>
         </div>
 
       )
