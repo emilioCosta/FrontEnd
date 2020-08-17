@@ -47,7 +47,8 @@ function TransTable(
     setIsEditing
   } = dispatches;
   const [language, setLanguage] = useState('en-US')
-  const data_rows = []
+  let data_rows = []
+  let captionsCpy = {}
   const [open, setOpen] = useState(false)
 
   const [page, setPage] = useState(0);
@@ -64,12 +65,62 @@ function TransTable(
   const createData = (id, time, text, operations = undefined) => {
     return { id, time, text, operations }
   }
-
+  const updataData = () => {
+    for (let i = 0; i < captionsCpy.length; i += 1) {
+      // console.log(captionsCpy[i]);
+      data_rows.push(createData(i,
+        <>
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+            spacing={0}
+          >
+            <button
+              className="plain-btn caption-line-time-display msp-caption-time-begin"
+            // onClick={handleSeek}
+            >
+              <span tabIndex="-1">{captionsCpy[i].begin.split('.')[0]}</span>
+            </button>
+            <button
+              className="plain-btn caption-line-time-display msp-caption-time-begin"
+            // onClick={handleSeek}
+            >
+              <span tabIndex="-1">{captionsCpy[i].end.split('.')[0]}</span>
+            </button>
+          </Grid>
+        </>,
+        // <CTInput
+        //   id={`cc-line-textarea-${captionsCpy[i].id}`}
+        //   className="msp-caption-display"
+        //   underlined
+        //   defaultValue={captionsCpy[i].text}
+        //   // onChange={(e) => { captionsCpy[i].text = e.target.value; }}
+        //   onChange={handleChange.bind(this, i)}
+        //   // value={captionsCpy[i].text}
+        // />
+        <div
+          onClick={() => { setSelectedIndex(i) }} 
+          className="msp-caption-display"
+          index={i}
+        >
+          {captionsCpy[i].text}
+        </div>
+        ,
+        // <Button id="delete-button">
+        //   <i className="material-icons" id="delete-icon">delete</i>
+        //   Delete
+        // </Button>
+      ));
+    }
+  }  
   // useEffect(() => {
   //   console.log(captions, transcriptions)
   // }, [captions, transcriptions])
 
   // set transcriptions and captions
+  
   useEffect(() => {
     if (!media.isUnavailable) {
       setTranscriptions(media.transcriptions)
@@ -85,6 +136,9 @@ function TransTable(
       })
     }
   }, [media])
+  
+  captionsCpy = _.cloneDeep(captions)
+  updataData();
 
   useEffect(
     () => {
@@ -106,8 +160,6 @@ function TransTable(
   //   videoControl.currTime(time);
   // };
 
-  let captionsCpy = _.cloneDeep(captions);
-
   // captionsCpy.addEventListener('click',i);
 
   // const handleChange = (event, i) => {
@@ -119,49 +171,10 @@ function TransTable(
   // const handleChange = (i, e) => {
   //   captionsCpy[i].text = e.target.value;
   // }
-  for (let i = 0; i < captionsCpy.length; i += 1) {
-    // console.log(captionsCpy[i]);
-    data_rows.push(createData(i,
-      <>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          spacing={0}
-        >
-          <button
-            className="plain-btn caption-line-time-display msp-caption-time-begin"
-          // onClick={handleSeek}
-          >
-            <span tabIndex="-1">{captionsCpy[i].begin.split('.')[0]}</span>
-          </button>
-          <button
-            className="plain-btn caption-line-time-display msp-caption-time-begin"
-          // onClick={handleSeek}
-          >
-            <span tabIndex="-1">{captionsCpy[i].end.split('.')[0]}</span>
-          </button>
-        </Grid>
-      </>,
-      // <CTInput
-      //   id={`cc-line-textarea-${captionsCpy[i].id}`}
-      //   className="msp-caption-input"
-      //   underlined
-      //   defaultValue={captionsCpy[i].text}
-      //   onChange={(e) => { captionsCpy[i].text = e.target.value; }}
-      // // value={captionsCpy[i].text}
-      // // onChange={this.handleChange.bind(this, i)}
-      // />
-      <div onClick={() => { setSelectedIndex(i) }} className="msp-caption-display" index={i}>
-        {captionsCpy[i].text}
-      </div>
-      ,
-      // <Button id="delete-button">
-      //   <i className="material-icons" id="delete-icon">delete</i>
-      //   Delete
-      // </Button>
-    ));
+
+  const handleChange = (index, e) => {
+    captionsCpy[index].text = e.target.value;
+    // console.log(captionsCpy);
   }
 
   const rowRenderer = props => {
@@ -183,10 +196,11 @@ function TransTable(
     //   api.updateCaptionLine({ id, text });
     // }
     // setCaptions(captionsCpy);
+    // console.log(captionsCpy);
   }
 
   const handleBulkCancel = () => {
-    // captionsCpy = _.cloneDeep(captions);
+    captionsCpy = _.cloneDeep(captions);
     // console.log(captionsCpy);
   }
 
@@ -215,6 +229,7 @@ function TransTable(
 
   const cellRenderer = ({ cellData, columnIndex, rowIndex, parent, key, style }) => {
     if (cellData !== undefined) {
+      // console.log(cellData)
       if (columnIndex && rowIndex === selectedIndex) {
         // console.log(cellData.props.index, rowIndex)
         return (
@@ -233,7 +248,10 @@ function TransTable(
               className="msp-caption-input"
               underlined
               defaultValue={captionsCpy[cellData.props.index].text}
-              onChange={(e) => { captionsCpy[cellData.props.index].text = e.target.value; }}
+              onChange={(e) => { captionsCpy[cellData.props.index].text = e.target.value; 
+                // console.log(captionsCpy);
+                updataData();}}
+              // onChange={handleChange.bind(this, cellData.props.index); }
             />
           </TableCell>
         )
