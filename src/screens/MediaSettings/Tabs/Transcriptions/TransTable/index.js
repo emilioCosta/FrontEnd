@@ -139,7 +139,7 @@ function TransTable(
         className="msp-caption-input"
         underlined
         defaultValue={captionsCpy[i].text}
-        onChange={(e) => {captionsCpy[i].text = e.target.value;}}
+        onChange={(e) => { captionsCpy[i].text = e.target.value; }}
       />,
       // <Button id="delete-button">
       //   <i className="material-icons" id="delete-icon">delete</i>
@@ -160,14 +160,14 @@ function TransTable(
   };
 
   const handleBulkSave = () => {
-      // console.log(captionsCpy);
-      // for (let i = 0; i < captionsCpy.length; i += 1) {
-      //   const { text = '', id, } = captionsCpy[i];
-      //   console.log("reacg");
-      //   api.updateCaptionLine({ id, text });
-      // }
+    // console.log(captionsCpy);
+    // for (let i = 0; i < captionsCpy.length; i += 1) {
+    //   const { text = '', id, } = captionsCpy[i];
+    //   console.log("reacg");
+    //   api.updateCaptionLine({ id, text });
+    // }
   }
-  
+
   const headerRenderer = ({ label, columnIndex }) => {
     if (!columnIndex) {
       return (

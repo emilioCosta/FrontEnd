@@ -7,7 +7,6 @@ import './index.scss';
 function Player({
   media,
   time,
-  setTime
 }) {
   return (
     <CTFragment id="msp-t-player-con" list data-scroll>
@@ -31,6 +30,6 @@ function Player({
 export default connectWithRedux(
   Player,
   ['time'],
-  ['setTime'],
+  [],
   ['media']
 );
