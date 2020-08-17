@@ -144,15 +144,19 @@ function TransTable(
           </button>
         </Grid>
       </>,
-      <CTInput
-        id={`cc-line-textarea-${captionsCpy[i].id}`}
-        className="msp-caption-input"
-        underlined
-        defaultValue={captionsCpy[i].text}
-        onChange={(e) => { captionsCpy[i].text = e.target.value; }}
-      // value={captionsCpy[i].text}
-      // onChange={this.handleChange.bind(this, i)}
-      />,
+      // <CTInput
+      //   id={`cc-line-textarea-${captionsCpy[i].id}`}
+      //   className="msp-caption-input"
+      //   underlined
+      //   defaultValue={captionsCpy[i].text}
+      //   onChange={(e) => { captionsCpy[i].text = e.target.value; }}
+      // // value={captionsCpy[i].text}
+      // // onChange={this.handleChange.bind(this, i)}
+      // />
+      <div onClick={() => { setSelectedIndex(i) }} className="msp-caption-display" index={i}>
+        {captionsCpy[i].text}
+      </div>
+      ,
       // <Button id="delete-button">
       //   <i className="material-icons" id="delete-icon">delete</i>
       //   Delete
@@ -211,20 +215,43 @@ function TransTable(
 
   const cellRenderer = ({ cellData, columnIndex, rowIndex, parent, key, style }) => {
     if (cellData !== undefined) {
-      return (
-        <TableCell
-          component="div"
-          id={`cell-${columnIndex}`}
-          variant="body"
-          align="right"
-          style={{
-            ...style,
-            borderBottom: 0
-          }}
-        >
-          {cellData}
-        </TableCell>
-      );
+      if (columnIndex && rowIndex === selectedIndex) {
+        // console.log(cellData.props.index, rowIndex)
+        return (
+          <TableCell
+            component="div"
+            id={`cell-${columnIndex}`}
+            variant="body"
+            align="right"
+            style={{
+              ...style,
+              borderBottom: 0
+            }}
+          >
+            <CTInput
+              id={`cc-line-textarea-${cellData.props.index}`}
+              className="msp-caption-input"
+              underlined
+              defaultValue={captionsCpy[cellData.props.index].text}
+              onChange={(e) => { captionsCpy[cellData.props.index].text = e.target.value; }}
+            />
+          </TableCell>
+        )
+      } 
+        return (
+          <TableCell
+            component="div"
+            id={`cell-${columnIndex}`}
+            variant="body"
+            align="right"
+            style={{
+              ...style,
+              borderBottom: 0
+            }}
+          >
+            {cellData}
+          </TableCell>
+        );
     }
   };
 
