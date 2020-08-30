@@ -16,11 +16,9 @@ function Player({
         width={540}
         allowTwoScreen
         hideWrapperOnMouseLeave
-        beginAt={100}
-        endAt={300}
+        defaultOpenRangePicker
         defaultOpenCC
         allowRangePicker
-        defaultOpenRangePicker
         defaultRange={[200, 400]}
       />
     </CTFragment>

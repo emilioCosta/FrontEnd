@@ -57,6 +57,8 @@ function TransTable(
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const onRowClick = () => setOpen(!open);
 
+  const [toTop, setToTop] = useState(true)
+
   const handleCaptionChange =
     ({ target: { value } }) => setCurrCaption(value);
 
@@ -65,7 +67,7 @@ function TransTable(
   const createData = (id, time, text, operations = undefined) => {
     return { id, time, text, operations }
   }
-  const updataData = () => {
+  const updateData = () => {
     for (let i = 0; i < captionsCpy.length; i += 1) {
       // console.log(captionsCpy[i]);
       data_rows.push(createData(i,
@@ -101,7 +103,10 @@ function TransTable(
         //   // value={captionsCpy[i].text}
         // />
         <div
-          onClick={() => { setSelectedIndex(i) }} 
+          // onClick={() => {
+          //   setCurrEditing(i)
+          //   setCurrCaption(captionsCpy[i])
+          // }}
           className="msp-caption-display"
           index={i}
         >
@@ -114,13 +119,13 @@ function TransTable(
         // </Button>
       ));
     }
-  }  
+  }
   // useEffect(() => {
   //   console.log(captions, transcriptions)
   // }, [captions, transcriptions])
 
   // set transcriptions and captions
-  
+
   useEffect(() => {
     if (!media.isUnavailable) {
       setTranscriptions(media.transcriptions)
@@ -136,9 +141,9 @@ function TransTable(
       })
     }
   }, [media])
-  
+
   captionsCpy = _.cloneDeep(captions)
-  updataData();
+  updateData();
 
   useEffect(
     () => {
@@ -220,6 +225,7 @@ function TransTable(
         <div>
           <Button onClick={handleBulkSave} className="header-button" startIcon={<SaveIcon />}>Save</Button>
           <Button onClick={handleBulkCancel} className="header-button" startIcon={<CancelIcon />}>Cancel</Button>
+          <Button onClick={() => setToTop(!toTop)} className="header-button" startIcon={<CancelIcon />}>to top</Button>
         </div>
 
       )
@@ -230,7 +236,7 @@ function TransTable(
   const cellRenderer = ({ cellData, columnIndex, rowIndex, parent, key, style }) => {
     if (cellData !== undefined) {
       // console.log(cellData)
-      if (columnIndex && rowIndex === selectedIndex) {
+      if (columnIndex && rowIndex === currEditing) {
         // console.log(cellData.props.index, rowIndex)
         return (
           <TableCell
@@ -244,32 +250,38 @@ function TransTable(
             }}
           >
             <CTInput
+              multiline
               id={`cc-line-textarea-${cellData.props.index}`}
               className="msp-caption-input"
               underlined
               defaultValue={captionsCpy[cellData.props.index].text}
-              onChange={(e) => { captionsCpy[cellData.props.index].text = e.target.value; 
-                // console.log(captionsCpy);
-                updataData();}}
-              // onChange={handleChange.bind(this, cellData.props.index); }
+              // value={}
+              onChange={({ target: { val } }) => {
+                captionsCpy[cellData.props.index].text = val;
+                // // console.log(captionsCpy);
+                updateData();
+                // setSelectedIndex(val)
+                // captionsCpy[cellData.props.index].text = val
+              }}
+            // onChange={handleChange.bind(this, cellData.props.index); }
             />
           </TableCell>
         )
-      } 
-        return (
-          <TableCell
-            component="div"
-            id={`cell-${columnIndex}`}
-            variant="body"
-            align="right"
-            style={{
-              ...style,
-              borderBottom: 0
-            }}
-          >
-            {cellData}
-          </TableCell>
-        );
+      }
+      return (
+        <TableCell
+          component="div"
+          id={`cell-${columnIndex}`}
+          variant="body"
+          align="right"
+          style={{
+            ...style,
+            borderBottom: 0
+          }}
+        >
+          {cellData}
+        </TableCell>
+      );
     }
   };
 
@@ -287,7 +299,8 @@ function TransTable(
             rowHeight={68}
             rowGetter={({ index }) => data_rows[index]}
             rowCount={data_rows.length}
-            // scrollToIndex={captionIndex}
+            scrollToIndex={captionIndex}
+            scrollTop={toTop}
             rowRenderer={
               //   (props) => rowRenderer({
               //   ...props,

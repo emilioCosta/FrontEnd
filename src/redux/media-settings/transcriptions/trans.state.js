@@ -6,6 +6,6 @@ export const initialState = {
   currTrans: {},
   captions: [],
   currCaption: null,
-  currEditing: null,
+  currEditing: -1,
   isEditing: false
 };
