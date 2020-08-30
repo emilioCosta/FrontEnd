@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withReduxProvider } from 'redux/redux-provider';
 import { CTLayout, CTFragment } from 'layout';
 import { courseStore, connectWithRedux, setup } from './controllers';
-import { Students, Staffs, CourseInfo, RemoveCourse } from './Components';
+import { Students, Staffs, CourseInfo, RemoveCourse } from './components';
 
 class CourseSettingsWithRedux extends Component {
   constructor(props) {
@@ -25,7 +25,7 @@ class CourseSettingsWithRedux extends Component {
       responsive: true,
       footer: true,
       headingProps: {
-        heading: loading ? '' : `${offering.fullNumber} Settings`,
+        heading: 'Course Settings',
         icon: 'settings',
         sticky: true,
         gradient: true,
@@ -33,8 +33,16 @@ class CourseSettingsWithRedux extends Component {
       },
       sidebarProps: {
         items: sidebar.getCoursePageSidebarItems(offering)
+      },
+      metaTagsProps: {
+        title: 'Course Settings'
       }
     }));
+
+    if (!loading && offering.fullNumber) {
+      layoutProps.headingProps.heading = <><span>{offering.fullNumber}</span> Settings</>;
+      layoutProps.metaTagsProps.title = `Settings | ${offering.fullNumber}`;
+    }
 
     return (
       <CTLayout {...layoutProps}>

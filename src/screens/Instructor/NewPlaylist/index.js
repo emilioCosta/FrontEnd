@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withReduxProvider } from 'redux/redux-provider';
 import { CTLayout, CTFragment } from 'layout';
 import { courseStore, connectWithRedux, setup, plControl } from './controllers';
-import { NewPlaylistForm } from './Components';
+import { NewPlaylistForm } from './components';
 
 export class NewPlaylistWithRedux extends Component {
   constructor(props) {
@@ -31,6 +31,9 @@ export class NewPlaylistWithRedux extends Component {
       },
       sidebarProps: {
         items: sidebar.getCoursePageSidebarItems(offering)
+      },
+      metaTagsProps: {
+        title: offering ? `New Playlist | ${offering.fullNumber}` : `New Playlist`
       }
     }));
 

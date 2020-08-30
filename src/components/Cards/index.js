@@ -1,5 +1,7 @@
-export { VideoCard } from './VideoCard';
-export { VideoCardPlaceHolder } from './VideoCard/VideoCard.Placeholder';
+export {
+  CourseCard,
+  CourseCardList,
+  CourseCardHolder
+} from './CourseCard';
 
-export { CourseCard } from './CourseCard/Card';
-export { CourseCardList } from './CourseCard/CardList';
+export { MediaCard } from './MediaCard';

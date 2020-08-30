@@ -1,6 +1,11 @@
 export { default as CTScrollArea } from './CTScrollArea';
 
-export { default as CTNavHeader } from './CTNavHeader';
+export {
+  default as CTNavHeader,
+  CTBrand,
+  SignInButton,
+  useSignButtonProps
+} from './CTNavHeader';
 
 export { default as CTFragment } from './CTFragment';
 
@@ -18,8 +23,6 @@ export { default as CTLoadable } from './CTLoadable';
 
 export { default as CTFilter, CTFilterInput } from './CTFilter';
 
-export { SignInMenu } from './CTNavHeader/NavHeaderMenu/SignInMenu';
-
 export { default as CTPopoverLabel } from './CTPopoverLabel';
 
 export { CTText, CTParagraph } from './CTText';
@@ -31,5 +34,7 @@ export { CTDNDContext, CTDNDItem, CTDNDList } from './CTDnd';
 export { CTModal, CTConfirmation } from './CTModal';
 
 export { useButtonStyles, CTFileButton } from './CTButtons';
+
+export { default as CTHorizontalScroll } from './CTHorizontalScroll';
 
 export * from './tools';

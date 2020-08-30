@@ -1,5 +1,5 @@
 import React from 'react';
-import { CTFragment } from 'layout';
+import { CTFragment, CTText } from 'layout';
 import { connectWithRedux } from '../../controllers/trans';
 import Player from './Player';
 import TransTable from './TransTable';
@@ -43,8 +43,13 @@ export function TranscriptionsWithRedux({
   return (
 
     <CTFragment fade className="msp-tab-con">
-      <Player />
-      <TransTable media={media} states={states} dispatches={dispatches} />
+      {/* <Player />
+      <TransTable media={media} /> */}
+      <CTFragment center padding={[30, 0]}>
+        <CTText celadon size="medium">
+          In progress
+        </CTText>
+      </CTFragment>
     </CTFragment>
   );
 }

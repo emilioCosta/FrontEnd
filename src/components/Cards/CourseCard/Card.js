@@ -7,7 +7,7 @@ import './index.scss';
 
 import { parseCourse } from './parse-course';
 
-export function CourseCard(props) {
+function CourseCard(props) {
   let {
     id,
     className,
@@ -36,14 +36,14 @@ export function CourseCard(props) {
   return (
     <CTFragment {...cardProps}>
       <div className="title">
-        <CTText teal className="number" size="large" line={1}>
+        <CTText teal bold className="number" size="large" line={1}>
           {number}
         </CTText>
 
         <CTText bold size="big" line={2}>{name}</CTText>
       </div>
 
-      <CTText celadon size="medium">
+      <CTText celadon size="medium" line={1}>
         {term} | {section}
       </CTText>
 
@@ -89,3 +89,4 @@ CourseCard.propTypes = {
 
 CourseCard.parse = parseCourse;
 
+export default CourseCard;
